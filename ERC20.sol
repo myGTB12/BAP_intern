@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
  
-//Safe Math Interface
+ //Safe Math Interface
  
 contract SafeMath {
  
@@ -59,8 +59,8 @@ contract QKCToken is ERC20Interface, SafeMath {
     mapping(address => mapping(address => uint)) allowed;
  
     constructor() public {
-        symbol = "LHC";
-        name = "Le Hai Coin";
+        symbol = "TBC";
+        name = "GHHH";
         decimals = 2;
         _totalSupply = 100000;
         balances[0x887872dfFC74C69B8d111390925DD4C6CF78E796] = _totalSupply;
