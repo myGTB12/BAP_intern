@@ -60,7 +60,7 @@ contract QKCToken is ERC20Interface, SafeMath {
  
     constructor() public {
         symbol = "TBC";
-        name = "GHHH";
+        name = "Tung Bo Coin";
         decimals = 2;
         _totalSupply = 100000;
         balances[0x887872dfFC74C69B8d111390925DD4C6CF78E796] = _totalSupply;
