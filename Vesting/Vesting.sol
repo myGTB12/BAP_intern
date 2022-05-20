@@ -8,7 +8,6 @@ import "./Ownable.sol";
 contract Vesting is ERC20, Ownable{
     using SafeMath for uint256;
     IERC20 public token;
-    uint256 public supplyForEachInvestor;
     uint256 public firstRelease; //after 1 year, investor can claim token
     uint256 public totalPeriods;    //8
     uint256 public timePerPeriods;  // 1 month
@@ -19,12 +18,12 @@ contract Vesting is ERC20, Ownable{
     event claim(address sender, address receiver, uint256 token_out);
 
     struct BuyerInfor{
-        uint256 claimedPeriods;
-        uint256 currentTimeClaim;
-        uint256 amount;
-        uint256 claimableToken;
-        bool claimedInCliff;
-        uint256 totalClaimedPeriods;
+        uint256 claimedPeriods;     //số period đã claim
+        uint256 currentTimeClaim;   //thời gian laim
+        uint256 amount;             //tổng sô token investor có thể claim
+        uint256 claimableToken;     //số token có thể claim
+        bool claimedInCliff;        //đã claim trong đợt cliff?
+        uint256 totalClaimedPeriods;//số chu kì đã claim
     }
     mapping(address => BuyerInfor) public buyerInfor;
     constructor(
@@ -38,8 +37,8 @@ contract Vesting is ERC20, Ownable{
         require(msg.sender == 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
         _;
     }
-    function addWhiteList(address whiteListAdress, uint amount) public{
-        buyerInfor[whiteListAdress].amount = amount;
+    function addWhiteList(address whiteListAdress) public{
+        buyerInfor[whiteListAdress].amount = 10000;
         buyerInfor[whiteListAdress].claimableToken = 0;
         buyerInfor[whiteListAdress].currentTimeClaim = 0;
         buyerInfor[whiteListAdress].totalClaimedPeriods = 0;
@@ -56,7 +55,7 @@ contract Vesting is ERC20, Ownable{
         require(buyerInfor[msg.sender].currentTimeClaim < block.timestamp && 
         buyerInfor[msg.sender].claimedPeriods <8, "NOT TIME NO CLAIM YOUR TOKEN");//Kiểm tra đẫ đến thời gian claim hay chưa?
         if(buyerInfor[msg.sender].currentTimeClaim <= firstRelease + clif){     //và sô chu kì phải nhỏ hơn 8
-            transferFrom(ADMIN, msg.sender, supplyForEachInvestor * clif);      //Nếu pass require thì check tiếp thời gian
+            transferFrom(ADMIN, msg.sender, buyerInfor[msg.sender].amount * clif);      //Nếu pass require thì check tiếp thời gian
             BuyerInfor memory buyerInfor1;                                      //có trong khoảng cliff thì cho claim 20%
             buyerInfor[msg.sender] = buyerInfor1;                           
             emit claim(ADMIN, msg.sender, buyerInfor[msg.sender].amount);
